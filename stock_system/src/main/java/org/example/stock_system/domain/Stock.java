@@ -3,6 +3,7 @@ package org.example.stock_system.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 @Entity
 public class Stock {
@@ -11,6 +12,9 @@ public class Stock {
 	private Long id;
 	private Long productId;
 	private Long quantity;
+
+	@Version
+	private Long version;
 
 	public Stock() {
 	}

@@ -16,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class StockServiceTest {
+class SynchronizedStockServiceTest {
 
 	@Autowired
-	private NormalStockService stockService;
+	private SynchronizedStockService stockService;
 	@Autowired
 	private StockRepository stockRepository;
 
@@ -33,22 +33,9 @@ class StockServiceTest {
 		stockRepository.deleteAll();
 	}
 
-	@DisplayName("상품의 재고 1개 감소")
+	@DisplayName("동시에 100개의 요청 with Only Synchronized keyword")
 	@Test
-	void decreaseStock() {
-		// when
-		stockService.decrease(1L, 1L);
-		Stock stock = stockRepository.findById(1L)
-			.orElseThrow();
-		Long quantity = stock.getQuantity();
-
-		// then
-		assertThat(quantity).isEqualTo(99);
-	}
-
-	@DisplayName("동시에 100개의 요청")
-	@Test
-	void request100QuantityConcurrently() throws InterruptedException {
+	void decreaseConcurrentlyWithSynchronized() throws InterruptedException {
 		// given
 		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
@@ -58,7 +45,35 @@ class StockServiceTest {
 		for (int i = 0; i < threadCount; i++) {
 			executorService.submit(() -> {
 				try {
-					stockService.decrease(1L, 1L);
+					stockService.decreaseOnlyByKeyword(1L, 1L);
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+		latch.await();
+
+		Stock stock = stockRepository.findById(1L)
+			.orElseThrow();
+		Long quantity = stock.getQuantity();
+
+		// then
+		assertThat(quantity).isEqualTo(0);
+	}
+
+	@DisplayName("동시에 100개의 요청 with no @Transactional")
+	@Test
+	void decreaseConcurrentlyWithNoAnnotation() throws InterruptedException {
+		// given
+		int threadCount = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		CountDownLatch latch = new CountDownLatch(threadCount);
+
+		// when
+		for (int i = 0; i < threadCount; i++) {
+			executorService.submit(() -> {
+				try {
+					stockService.decreaseNoAnnotation(1L, 1L);
 				} finally {
 					latch.countDown();
 				}

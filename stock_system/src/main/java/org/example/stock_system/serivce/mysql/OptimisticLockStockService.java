@@ -1,4 +1,4 @@
-package org.example.stock_system.serivce;
+package org.example.stock_system.serivce.mysql;
 
 import org.example.stock_system.domain.Stock;
 import org.example.stock_system.repository.StockRepository;

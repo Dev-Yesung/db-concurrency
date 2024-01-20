@@ -1,7 +1,7 @@
-package org.example.stock_system.serivce.facade;
+package org.example.stock_system.serivce.mysql.facade;
 
 import org.example.stock_system.repository.LockRepository;
-import org.example.stock_system.serivce.NamedLockStockService;
+import org.example.stock_system.serivce.mysql.NamedLockStockService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

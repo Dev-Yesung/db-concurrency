@@ -1,4 +1,4 @@
-package org.example.stock_system.serivce.facade;
+package org.example.stock_system.serivce.mysql;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.example.stock_system.domain.Stock;
 import org.example.stock_system.repository.StockRepository;
+import org.example.stock_system.serivce.mysql.NormalStockService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OptimisticLockStockFacadeTest {
+class StockServiceTest {
 
 	@Autowired
-	private OptimisticLockStockFacade optimisticLockStockFacade;
+	private NormalStockService stockService;
 	@Autowired
 	private StockRepository stockRepository;
 
@@ -33,9 +34,22 @@ class OptimisticLockStockFacadeTest {
 		stockRepository.deleteAll();
 	}
 
-	@DisplayName("동시에 100개의 요청 with optimistic lock")
+	@DisplayName("상품의 재고 1개 감소")
 	@Test
-	void decreaseConcurrentlyWithSynchronized() throws InterruptedException {
+	void decreaseStock() {
+		// when
+		stockService.decrease(1L, 1L);
+		Stock stock = stockRepository.findById(1L)
+			.orElseThrow();
+		Long quantity = stock.getQuantity();
+
+		// then
+		assertThat(quantity).isEqualTo(99);
+	}
+
+	@DisplayName("동시에 100개의 요청")
+	@Test
+	void request100QuantityConcurrently() throws InterruptedException {
 		// given
 		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
@@ -45,9 +59,7 @@ class OptimisticLockStockFacadeTest {
 		for (int i = 0; i < threadCount; i++) {
 			executorService.submit(() -> {
 				try {
-					optimisticLockStockFacade.decrease(1L, 1L);
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
+					stockService.decrease(1L, 1L);
 				} finally {
 					latch.countDown();
 				}

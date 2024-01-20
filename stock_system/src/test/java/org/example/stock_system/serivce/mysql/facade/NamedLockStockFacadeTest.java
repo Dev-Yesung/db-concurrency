@@ -1,4 +1,4 @@
-package org.example.stock_system.serivce.facade;
+package org.example.stock_system.serivce.mysql.facade;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.example.stock_system.domain.Stock;
 import org.example.stock_system.repository.StockRepository;
+import org.example.stock_system.serivce.mysql.facade.NamedLockStockFacade;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

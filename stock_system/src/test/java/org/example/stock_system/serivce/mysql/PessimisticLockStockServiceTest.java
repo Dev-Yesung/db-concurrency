@@ -1,4 +1,4 @@
-package org.example.stock_system.serivce;
+package org.example.stock_system.serivce.mysql;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,7 +34,7 @@ class PessimisticLockStockServiceTest {
 
 	@DisplayName("동시에 100개의 요청 with pessimistic lock")
 	@Test
-	void decreaseConcurrentlyWithSynchronized() throws InterruptedException {
+	void decreaseConcurrently() throws InterruptedException {
 		// given
 		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(32);

@@ -1,6 +1,6 @@
-package org.example.stock_system.serivce.facade;
+package org.example.stock_system.serivce.mysql.facade;
 
-import org.example.stock_system.serivce.OptimisticLockStockService;
+import org.example.stock_system.serivce.mysql.OptimisticLockStockService;
 import org.springframework.stereotype.Component;
 
 /*

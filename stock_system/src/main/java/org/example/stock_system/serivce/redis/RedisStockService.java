@@ -20,6 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 	해제를 하면 알려줘 lock을 획득하게 만드는 방식
 	- 별도의 retry 를 구현하지 않아도 된다.
 
+
+	Lettuce vs Redisson
+	둘의 차이는 락 재시도에 있다.
+	Redisson의 경우 별도의 락 획득 로직을 구현 안해도 된다.
+	반면, Lettuce는 락 획득 로직을 작성해야 한다.
+	따라서 실무에서는 락을 다시 획득할 필요가 있는 경우 Redisson을 활용한다.
+	그리고 락 획득 재시도가 필요 없는 경우 Lettuce를 활용한다.
+	경우를 생각해서 이 둘을 잘 섞어서 사용하도록 하자.
  */
 @Service
 public class RedisStockService {

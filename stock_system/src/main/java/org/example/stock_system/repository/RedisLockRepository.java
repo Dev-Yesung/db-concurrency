@@ -14,6 +14,10 @@ public class RedisLockRepository {
 		this.redisTemplate = redisTemplate;
 	}
 
+	/* 	redis의 setnx 명령어를 사용하여 구현한다.
+	 	setnx는 key 값이 이미 존재할 경우 값을 세팅하는데 실패한다.
+	 	따라서 lock의 역할을 할 수 있다.
+	*/
 	public Boolean lock(Long key) {
 		return redisTemplate
 			.opsForValue()

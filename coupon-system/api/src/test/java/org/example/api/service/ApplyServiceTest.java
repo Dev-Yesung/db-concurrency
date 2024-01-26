@@ -60,4 +60,31 @@ class ApplyServiceTest {
 		// then
 		assertThat(count).isEqualTo(100);
 	}
+
+	@DisplayName("레디스를 활용해 동시에 여러 명이 쿠폰을 발급")
+	@Test
+	void useRedisToTest() throws InterruptedException {
+		// given
+		int threadCount = 1000;
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
+
+		// when
+		CountDownLatch latch = new CountDownLatch(threadCount);
+		for (int i = 0; i < threadCount; i++) {
+			long userId = i;
+			executorService.submit(() -> {
+				try {
+					applyService.applyRedis(userId);
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+		latch.await();
+
+		long count = couponRepository.count();
+
+		// then
+		assertThat(count).isEqualTo(100);
+	}
 }
